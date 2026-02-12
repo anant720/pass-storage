@@ -213,6 +213,6 @@ app.post("/api/passwords", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`API server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
