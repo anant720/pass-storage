@@ -223,7 +223,118 @@ app.post("/api/passwords", async (req, res) => {
   }
 });
 
+app.put("/api/passwords/:id", async (req, res) => {
+  const { userId, site, username, password } = req.body || {};
+
+  if (!userId || !site || !username || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const item = await PasswordItem.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ message: "Password item not found" });
+    }
+
+    // Verify ownership
+    if (item.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    item.site = site;
+    item.username = username;
+    item.password = password;
+    await item.save();
+
+    return res.json({ item: item.toJSON() });
+  } catch (err) {
+    console.error("Update password error:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error while updating password" });
+  }
+});
+
+app.delete("/api/passwords/:id", async (req, res) => {
+  const { userId } = req.body || {};
+
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required" });
+  }
+
+  try {
+    const item = await PasswordItem.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ message: "Password item not found" });
+    }
+
+    // Verify ownership
+    if (item.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await PasswordItem.findByIdAndDelete(req.params.id);
+    return res.json({ message: "Deleted successfully" });
+  } catch (err) {
+    console.error("Delete password error:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error while deleting password" });
+  }
+});
+
+app.put("/api/auth/change-password", async (req, res) => {
+  const { userId, oldPassword, newPassword } = req.body || {};
+
+  if (!userId || !oldPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "userId, oldPassword, and newPassword are required" });
+  }
+
+  if (newPassword.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "New password must be at least 6 characters" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify old password
+    const stored = user.password || "";
+    const looksHashed =
+      stored.startsWith("$2a$") ||
+      stored.startsWith("$2b$") ||
+      stored.startsWith("$2y$");
+
+    let isMatch = false;
+    if (looksHashed) {
+      isMatch = await bcrypt.compare(oldPassword, stored);
+    } else {
+      isMatch = oldPassword === stored;
+    }
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash and save new password
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    return res.json({ message: "Password changed successfully" });
+  } catch (err) {
+    console.error("Change password error:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error while changing password" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
