@@ -14,7 +14,9 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/liquidpass";
 const FRONTEND_URL =
-  process.env.FRONTEND_URL || "http://localhost:5173";
+  (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+
+console.log("Allowed CORS Origin:", FRONTEND_URL);
 
 // --- Global middlewares ---
 

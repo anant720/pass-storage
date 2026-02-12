@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Copy, Plus, LogOut, Search, Lock, User, Check, ArrowRight, Shield } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
 
 // --- Components ---
 
@@ -15,7 +15,7 @@ const GlassCard = ({ children, className = "", noPadding = false }) => (
 
 const LiquidButton = ({ children, variant = "primary", onClick, className = "", type = "button", disabled = false }) => {
   const baseStyle = "relative w-full py-3 px-6 rounded-2xl font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 overflow-hidden group";
-  
+
   const variants = {
     primary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 border-t border-white/20",
     secondary: "bg-gradient-to-r from-emerald-400 to-cyan-400 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 border-t border-white/20",
@@ -72,15 +72,15 @@ const PasswordCard = ({ item, onCopy }) => {
             <p className="text-xs text-slate-500 font-medium">{item.username}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => setIsVisible(!isVisible)}
             className="p-2 rounded-xl hover:bg-white/50 text-slate-500 hover:text-violet-600 transition-colors"
           >
             {isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
-          <button 
+          <button
             onClick={handleCopy}
             className="p-2 rounded-xl hover:bg-white/50 text-slate-500 hover:text-emerald-600 transition-colors relative"
           >
@@ -88,7 +88,7 @@ const PasswordCard = ({ item, onCopy }) => {
           </button>
         </div>
       </div>
-      
+
       <div className={`mt-3 px-3 py-2 rounded-lg bg-slate-900/5 border border-white/20 font-mono text-sm text-slate-700 flex items-center justify-between transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-70 blur-[3px] select-none'}`}>
         <span>{isVisible ? item.password : '••••••••••••'}</span>
       </div>
@@ -104,10 +104,10 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   // Auth Form State
   const [authForm, setAuthForm] = useState({ username: '', password: '' });
-  
+
   // Dashboard State
   const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -197,8 +197,8 @@ export default function App() {
     document.body.removeChild(textArea);
   };
 
-  const filteredItems = items.filter(item => 
-    item.site.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredItems = items.filter(item =>
+    item.site.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -224,20 +224,20 @@ export default function App() {
           </div>
 
           <form onSubmit={handleAuthSubmit} className="space-y-5">
-            <GlassInput 
+            <GlassInput
               icon={User}
               name="username"
               placeholder="Username"
               value={authForm.username}
-              onChange={(e) => setAuthForm({...authForm, username: e.target.value})}
+              onChange={(e) => setAuthForm({ ...authForm, username: e.target.value })}
             />
-            <GlassInput 
+            <GlassInput
               icon={Lock}
               type="password"
               name="password"
               placeholder="Password"
               value={authForm.password}
-              onChange={(e) => setAuthForm({...authForm, password: e.target.value})}
+              onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
             />
 
             {error && <p className="text-rose-500 text-sm text-center font-medium bg-rose-100/50 py-2 rounded-xl border border-rose-200">{error}</p>}
@@ -248,7 +248,7 @@ export default function App() {
           </form>
 
           <div className="text-center">
-            <button 
+            <button
               onClick={() => { setError(''); setAuthMode(authMode === 'login' ? 'signup' : 'login'); }}
               className="text-slate-500 hover:text-violet-600 text-sm font-medium transition-colors"
             >
@@ -270,7 +270,7 @@ export default function App() {
       </div>
 
       <div className="max-w-5xl mx-auto relative z-10 space-y-8">
-        
+
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -282,7 +282,7 @@ export default function App() {
               <LogOut size={18} />
               <span>Logout</span>
             </LiquidButton>
-            <LiquidButton 
+            <LiquidButton
               className="w-auto shadow-lg shadow-violet-500/20"
               onClick={() => setShowAddModal(true)}
             >
@@ -294,44 +294,44 @@ export default function App() {
 
         {/* Main Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Left Panel: Search & Stats (Simulating the left sidebar/widgets in your image) */}
           <div className="space-y-6">
             <GlassCard className="space-y-4">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                <input 
-                  type="text" 
-                  placeholder="Search vault..." 
+                <input
+                  type="text"
+                  placeholder="Search vault..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/50 border border-white/40 focus:bg-white/80 focus:ring-2 focus:ring-violet-400/30 outline-none transition-all placeholder-slate-400"
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-3">
-                 <div className="bg-gradient-to-br from-violet-100 to-white p-4 rounded-2xl border border-white/40 text-center">
-                    <span className="block text-2xl font-bold text-violet-600">{items.length}</span>
-                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Passwords</span>
-                 </div>
-                 <div className="bg-gradient-to-br from-emerald-100 to-white p-4 rounded-2xl border border-white/40 text-center">
-                    <span className="block text-2xl font-bold text-emerald-600">High</span>
-                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Security</span>
-                 </div>
+                <div className="bg-gradient-to-br from-violet-100 to-white p-4 rounded-2xl border border-white/40 text-center">
+                  <span className="block text-2xl font-bold text-violet-600">{items.length}</span>
+                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Passwords</span>
+                </div>
+                <div className="bg-gradient-to-br from-emerald-100 to-white p-4 rounded-2xl border border-white/40 text-center">
+                  <span className="block text-2xl font-bold text-emerald-600">High</span>
+                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Security</span>
+                </div>
               </div>
             </GlassCard>
 
             {/* Promo Card Style (from image) */}
             <div className="relative overflow-hidden rounded-3xl p-6 text-white shadow-xl shadow-fuchsia-500/20">
-               <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-400 to-violet-500" />
-               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-               <div className="relative z-10">
-                 <h3 className="text-xl font-bold mb-1">Premium Plan</h3>
-                 <p className="text-white/80 text-sm mb-4">Unlock unlimited storage and biometric sync.</p>
-                 <button className="bg-white text-fuchsia-600 px-4 py-2 rounded-xl text-sm font-bold shadow-md active:scale-95 transition-transform flex items-center gap-2">
-                   <ArrowRight size={16} /> Upgrade Now
-                 </button>
-               </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-400 to-violet-500" />
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-1">Premium Plan</h3>
+                <p className="text-white/80 text-sm mb-4">Unlock unlimited storage and biometric sync.</p>
+                <button className="bg-white text-fuchsia-600 px-4 py-2 rounded-xl text-sm font-bold shadow-md active:scale-95 transition-transform flex items-center gap-2">
+                  <ArrowRight size={16} /> Upgrade Now
+                </button>
+              </div>
             </div>
           </div>
 
@@ -341,7 +341,7 @@ export default function App() {
               <h2 className="text-lg font-semibold text-slate-700">Stored Credentials</h2>
               <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Recent</span>
             </div>
-            
+
             <div className="grid grid-cols-1 gap-4">
               {filteredItems.length > 0 ? (
                 filteredItems.map(item => (
@@ -349,10 +349,10 @@ export default function App() {
                 ))
               ) : (
                 <div className="text-center py-12 opacity-50">
-                   <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Lock size={24} className="text-slate-400" />
-                   </div>
-                   <p>No passwords found.</p>
+                  <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Lock size={24} className="text-slate-400" />
+                  </div>
+                  <p>No passwords found.</p>
                 </div>
               )}
             </div>
@@ -370,43 +370,43 @@ export default function App() {
             <form onSubmit={handleAddItem} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1 ml-1">Website / App</label>
-                <GlassInput 
+                <GlassInput
                   name="site"
                   placeholder="e.g. Netflix"
                   value={newItem.site}
-                  onChange={(e) => setNewItem({...newItem, site: e.target.value})}
+                  onChange={(e) => setNewItem({ ...newItem, site: e.target.value })}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1 ml-1">Username</label>
-                <GlassInput 
+                <GlassInput
                   name="username"
                   placeholder="email@example.com"
                   value={newItem.username}
-                  onChange={(e) => setNewItem({...newItem, username: e.target.value})}
+                  onChange={(e) => setNewItem({ ...newItem, username: e.target.value })}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1 ml-1">Password</label>
-                <GlassInput 
+                <GlassInput
                   name="password"
                   placeholder="Super secret password"
                   value={newItem.password}
-                  onChange={(e) => setNewItem({...newItem, password: e.target.value})}
+                  onChange={(e) => setNewItem({ ...newItem, password: e.target.value })}
                 />
               </div>
-              
+
               <div className="flex gap-3 pt-4">
-                <LiquidButton 
-                  variant="ghost" 
-                  onClick={() => setShowAddModal(false)} 
+                <LiquidButton
+                  variant="ghost"
+                  onClick={() => setShowAddModal(false)}
                   className="flex-1"
                 >
                   Cancel
                 </LiquidButton>
-                <LiquidButton 
-                  type="submit" 
-                  variant="secondary" 
+                <LiquidButton
+                  type="submit"
+                  variant="secondary"
                   className="flex-1"
                   disabled={loading || !newItem.site || !newItem.password}
                 >
