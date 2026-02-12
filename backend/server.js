@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
+import compression from "compression";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
@@ -17,6 +18,12 @@ const FRONTEND_URL =
 
 // --- Global middlewares ---
 
+// Trust Proxy (Essential for Render/Vercel/Heroku)
+app.set('trust proxy', 1);
+
+// Compression (Gzip)
+app.use(compression());
+
 // Security headers
 app.use(helmet());
 
@@ -24,6 +31,8 @@ app.use(helmet());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per window
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(limiter);
 
